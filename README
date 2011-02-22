@@ -11,9 +11,9 @@ How to install
 - Click on tick/cross icon of 'TVocabulary' for activating or deactivating the plugin
 
 IMPORTANT: Because now it is not possible to load tvocabulary element via core croogo
-Layout helper (or I don't know how), you must manually copy tvocabulary element from
-plugin dir /view/elements/tvocabulary.ctp to your theme elements dir. If you are use
-default croogo theme, copy it to /app/views/elements
+Layout helper without changing core files (or I don't know how), you must manually copy
+tvocabulary element from plugin dir /view/elements/tvocabulary.ctp to your theme elements dir.
+If you are using default croogo theme, copy it to /app/views/elements
 
 
 Settings
