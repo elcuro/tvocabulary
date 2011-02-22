@@ -21,7 +21,7 @@ class TVocabularyHelper extends AppHelper {
         );
 
         /**
-         * contain term parent id of thread
+         * parent ids of term
          *
          * @var array
          */
@@ -45,7 +45,8 @@ class TVocabularyHelper extends AppHelper {
                         $term_id = $this->__getTermId($vocabulary);
                         $this->__getPath($term_id, $vocabulary);                        
                         $output .= $this->__nestedTerms($vocabulary, $options, $term_id);
-                }               
+                }
+                unset($this->_term_path);
                 return $output;
 
         }
@@ -96,13 +97,11 @@ class TVocabularyHelper extends AppHelper {
                                 $term_path = array_slice($this->_term_path, 0, $depth, true);
                         }
 
-                        // if path is equal, or required node has child terms
+                        // if path is equal, or required term has child terms
                         if (($this->_thread_path === $term_path) || ($term_parent == $req_term_id)) {
                                 // if is selected term
                                 if ($term_id == $req_term_id) {
-                                        $term_output = ($options['linkSelected']) ?
-                                                $this->Html->tag('li', $term_output, array('class' => 'selected')) :
-                                                $this->Html->tag('li', $term_title, array('class' => 'selected'));
+                                        $this->Html->tag('li', $term_output, array('class' => 'selected'));
                                 } else {
                                         $term_output = $this->Html->tag('li', $term_output);
                                 }

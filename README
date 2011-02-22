@@ -1,0 +1,34 @@
+Croogo TVocabulary  plugin
+------------------------------
+Show Croogo vocabularies as threaded parent child tree navigation
+
+
+How to install
+------------------------------
+- Log in to admin panel
+- Go to Extensions > Plugins page
+- Upload the zip file (available here)
+- Click on tick/cross icon of 'TVocabulary' for activating or deactivating the plugin
+
+IMPORTANT: Because now it is not possible to load tvocabulary element via core croogo
+Layout helper (or I don't know how), you must manually copy tvocabulary element from
+plugin dir /view/elements/tvocabulary.ctp to your theme elements dir. If you are use
+default croogo theme, copy it to /app/views/elements
+
+
+Settings
+------------------------------
+Same setting syntax and options as in core croogo vocabularies
+
+
+How to use
+------------------------------
+- create vocabulary in admin: Content/Taxonomy/Add new
+- add some terms with parent child structure
+- create block: Blocks/New block
+- to body area type something like this:
+[vocabulary:your_vocabulary_alias element="tvocabulary"]
+
+This plugin is fresh, so there can be some bugs. Report it to me
+
+
