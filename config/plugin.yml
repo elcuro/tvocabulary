@@ -1,0 +1,10 @@
+name: TVocabulary
+description: Vocabularies with nested terms threaded by current term
+
+author: Juraj Jancuska
+authorEmail: jjancuska@gmail.com
+authorUrl: 
+
+dependencies:
+  plugins:
+    - extensions
