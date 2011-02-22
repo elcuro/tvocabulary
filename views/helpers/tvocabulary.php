@@ -28,17 +28,6 @@ class TVocabularyHelper extends AppHelper {
         private $_thread_path = array();
 
         /**
-         * Constructor
-         *
-         * @param array $options options
-         * @access public
-         */
-        public function __construct($options = array()) {
-                $this->View = & ClassRegistry::getObject('view');
-                return parent::__construct($options);
-        }
-
-        /**
          * Get vocabulary terms
          *
          * @param string $vocabulary_alias
@@ -53,9 +42,7 @@ class TVocabularyHelper extends AppHelper {
                 $output = '';
                 $term_id = false;
                 if (is_array($vocabulary)) {
-                        if (isset($this->View->viewVars['term']['Term']['id'])) {
-                                $term_id = $this->View->viewVars['term']['Term']['id'];
-                        }
+                        $term_id = $this->__getTermId($vocabulary);
                         $this->__getPath($term_id, $vocabulary);                        
                         $output .= $this->__nestedTerms($vocabulary, $options, $term_id);
                 }               
@@ -109,7 +96,7 @@ class TVocabularyHelper extends AppHelper {
                                 $term_path = array_slice($this->_term_path, 0, $depth, true);
                         }
 
-                        // if path is equal or required node has child terms
+                        // if path is equal, or required node has child terms
                         if (($this->_thread_path === $term_path) || ($term_parent == $req_term_id)) {
                                 // if is selected term
                                 if ($term_id == $req_term_id) {
@@ -127,7 +114,7 @@ class TVocabularyHelper extends AppHelper {
                 }
                 
                 if ($output != null) {
-                        $output = $this->Html->tag('ul', $output);                        
+                        $output = $this->Html->tag($options['tag'], $output, $options['tagAttributes']);
                 }
                 return $output;
 
@@ -167,13 +154,32 @@ class TVocabularyHelper extends AppHelper {
         /**
          * Get current term_id from view vars
          *
-         * @return void
+         * @param array $vocabulary
+         * @return integer
          */
-        private function __getTermId() {
+        private function __getTermId($vocabulary) {
+                 $vocabulary_id = Set::classicExtract($vocabulary, '0.Taxonomy.vocabulary_id');
 
                 // term view
+                if (isset($this->Layout->View->viewVars['term']['Term']['id'])) {
+                        $term_id = $this->Layout->View->viewVars['term']['Term']['id'];
+                        //check if is vocabulary for this term
+                        $term_vocabulary_id = Set::classicExtract($this->Layout->View->viewVars['term']['Vocabulary'], '0.id');                        
+                        if ($vocabulary_id == $term_vocabulary_id) {
+                                return $term_id;
+                        }
+                }
 
                 // node view
+                if (isset($this->Layout->View->viewVars['node']['Taxonomy'])) {
+                        //check if is vocabulary for this node
+                        foreach($this->Layout->View->viewVars['node']['Taxonomy'] as $taxonomy) {
+                                if ($vocabulary_id == $taxonomy['vocabulary_id']) {
+                                        return $taxonomy['Term']['id'];
+                                }
+                        }
+                }
+                return 0;
         }
 
 }
