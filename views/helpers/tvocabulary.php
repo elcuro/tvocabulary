@@ -42,11 +42,11 @@ class TVocabularyHelper extends AppHelper {
                 $output = '';
                 $term_id = false;
                 if (is_array($vocabulary)) {
-                        $term_id = $this->Layout->View->viewVars['term']['Term']['id']; //$this->__getTermId($vocabulary);
+                        $term_id = $this->__getTermId($vocabulary);
                         $this->__getPath($term_id, $vocabulary);                        
                         $output .= $this->__nestedTerms($vocabulary, $options, $term_id);
                 }
-                //unset($this->_term_path);
+                unset($this->_term_path);
                 return $output;
 
         }
