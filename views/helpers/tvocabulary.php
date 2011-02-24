@@ -8,7 +8,7 @@
  * @author Juraj Jancuska <jjancuska@gmail.com>
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-class TVocabularyHelper extends AppHelper {
+class TvocabularyHelper extends AppHelper {
 
         /**
          * Used helpers
