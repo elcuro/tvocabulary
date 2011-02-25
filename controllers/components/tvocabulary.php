@@ -1,6 +1,6 @@
 <?php
 /**
-* TVcoabulary components
+* TVcoabulary component
 *
 * @author Juraj Jancuska <jjancuska@gmail.com>
 * @copyright (c) 2010 Juraj Jancuska

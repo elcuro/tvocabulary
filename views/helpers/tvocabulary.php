@@ -2,7 +2,7 @@
 /**
  * TVocabulary helper
  *
- * Helper class for TVocabulary plugin.
+ * Helper class for Tvocabulary plugin.
  *
  * @package  Croogo
  * @author Juraj Jancuska <jjancuska@gmail.com>
@@ -35,7 +35,13 @@ class TvocabularyHelper extends AppHelper {
          */
         public function nestedTerms($vocabulary, $options = array()) {
                 $_options = array(
-                    'linkSelected' => true
+                    'linkSelected' => true,
+                    'showNodes' => 'true',
+                    'nodeController' => 'nodes',
+                    'nodeAction' => 'view',
+                    'nodePlugin' => false,
+                    'nodeTagAttributes' => array(),
+                    'nodeTag' => 'ul'
                 );
                 $options = array_merge($_options, $options);
 
@@ -63,7 +69,6 @@ class TvocabularyHelper extends AppHelper {
 
                 $output = '';
                 foreach ($terms as $term) {
-
                         if ($options['link']) {
                                 $term_attr = array(
                                     'id' => 'term-' . $term['Term']['id'],
@@ -81,12 +86,15 @@ class TvocabularyHelper extends AppHelper {
                         $term_parent = $term['Taxonomy']['parent_id'];
                         $term_id = $term['Term']['id'];
                         $term_title = $term['Term']['title'];
+                        $term_slug = $term['Term']['slug'];
+                        $term_has_children = false;
 
                         // add current term_parent id to _thread_path
                         $this->_thread_path[$depth] = $term_parent;
                         
                         // recursion
                         if (isset($term['children']) && count($term['children']) > 0) {
+                                $term_has_children = true;
                                 $term_output .= $this->__nestedTerms($term['children'], $options, $req_term_id, $depth + 1);
                         }
                                                 
@@ -101,6 +109,10 @@ class TvocabularyHelper extends AppHelper {
                         if (($this->_thread_path === $term_path) || ($term_parent == $req_term_id)) {
                                 // if is selected term
                                 if ($term_id == $req_term_id) {
+                                        // if is last in thread and if is enabled show nodes for this therm
+                                        if (!$term_has_children && ($options['showNodes'] == 'true')) {
+                                                $term_output .= $this->__nodesList($term_slug, $options);
+                                        } 
                                         $term_output = $this->Html->tag('li', $term_output, array('class' => 'selected'));
                                 } else {
                                         $term_output = $this->Html->tag('li', $term_output);
@@ -116,7 +128,46 @@ class TvocabularyHelper extends AppHelper {
                         $output = $this->Html->tag($options['tag'], $output, $options['tagAttributes']);
                 }
                 return $output;
+        }
 
+        /**
+         * Nodes list
+         *
+         * @param string $term_slug
+         * @return string
+         */
+        private function __nodesList($term_slug, $options) {
+                $output = '';
+                $term_nodes = $this->Layout->View->viewVars['term_nodes_for_layout'];
+                if (isset($term_nodes[$term_slug])) {
+                        foreach ($term_nodes[$term_slug] as $node) {
+                                if ($options['link']) {
+                                        $node_attr = array(
+                                            'id' => 'node-' . $node['Node']['id'],
+                                        );
+                                        // check if is it selected node
+                                        if (isset($this->Layout->View->viewVars['node']) &&
+                                                ($this->Layout->View->viewVars['node']['Node']['id'] == $node['Node']['id'])) {
+                                                $node_attr['class'] = 'selected-node';
+                                        }
+                                        $node_output = $this->Html->link($node['Node']['title'], array(
+                                            'controller' => $options['nodeController'],
+                                            'action' => $options['nodeAction'],
+                                            'plugin' => $options['nodePlugin'],
+                                            'slug' => $node['Node']['slug'],
+                                            'type' => $node['Node']['type']
+                                        ), $node_attr);
+                                        $node_output = $this->Html->tag('li', $node_output);
+                                } else {
+                                        $node_output = $node['Node']['title'];
+                                }
+                                $output .= $node_output;
+                        }
+                        if (!empty($output)) {
+                                $output = $this->Html->tag('ul', $output);
+                        }
+                }
+                return $output;
         }
 
         /**

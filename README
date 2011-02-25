@@ -18,7 +18,13 @@ If you are using default croogo theme, copy it to /app/views/elements
 
 Settings
 ------------------------------
-Same setting syntax and options as in core croogo vocabularies
+Same setting syntax and options as in core croogo vocabularies,
+Extra attributes:
+"showNodes" (true) - disable showing nodes for term
+"nodeController" (node) - controller for term nodes
+"nodeAction" (view) - action for term nodes
+"nodePlugin" (false) - plugin for term nodes
+"nodeTagAttributes" (array) - attributes for <li> element
 
 
 How to use
@@ -29,6 +35,8 @@ How to use
 - to body area type something like this:
 [vocabulary:your_vocabulary_alias element="tvocabulary"]
 
-This plugin is fresh, so there can be some bugs. Report it to me
+Showing child nodes for term is default enabled, you can disable
+it by setting showNodes attribute to false
+e.g.: [vocabulary:your_vocabulary_alias element="tvocabulary" showNodes="false"]
 
-
+This plugin is so fresh, so there can be some bugs. Report it to me
