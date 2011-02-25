@@ -145,10 +145,11 @@ class TvocabularyHelper extends AppHelper {
                                         $node_attr = array(
                                             'id' => 'node-' . $node['Node']['id'],
                                         );
+                                        $li_attr = array();
                                         // check if is it selected node
                                         if (isset($this->Layout->View->viewVars['node']) &&
                                                 ($this->Layout->View->viewVars['node']['Node']['id'] == $node['Node']['id'])) {
-                                                $node_attr['class'] = 'selected-node';
+                                                $li_attr['class'] = 'selected-node';
                                         }
                                         $node_output = $this->Html->link($node['Node']['title'], array(
                                             'controller' => $options['nodeController'],
@@ -157,7 +158,7 @@ class TvocabularyHelper extends AppHelper {
                                             'slug' => $node['Node']['slug'],
                                             'type' => $node['Node']['type']
                                         ), $node_attr);
-                                        $node_output = $this->Html->tag('li', $node_output);
+                                        $node_output = $this->Html->tag('li', $node_output, $li_attr);
                                 } else {
                                         $node_output = $node['Node']['title'];
                                 }
