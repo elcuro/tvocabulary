@@ -3,7 +3,7 @@
  * Helper
  *
  */
-        Croogo::hookHelper('Nodes', 'Tvocabulary.Tvocabulary');
+        Croogo::hookHelper('*', 'Tvocabulary.Tvocabulary');
 /**
  * Component
  *
