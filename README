@@ -16,17 +16,6 @@ tvocabulary element from plugin dir /view/elements/tvocabulary.ctp to your theme
 If you are using default croogo theme, copy it to /app/views/elements
 
 
-Settings
-------------------------------
-Same setting syntax and options as in core croogo vocabularies,
-Extra attributes:
-"showNodes" (true) - disable showing nodes for term
-"nodeController" (node) - controller for term nodes
-"nodeAction" (view) - action for term nodes
-"nodePlugin" (false) - plugin for term nodes
-"nodeTagAttributes" (array) - attributes for <li> element
-
-
 How to use
 ------------------------------
 - create vocabulary in admin: Content/Taxonomy/Add new
@@ -38,5 +27,16 @@ How to use
 Showing child nodes for term is default enabled, you can disable
 it by setting showNodes attribute to false
 e.g.: [vocabulary:your_vocabulary_alias element="tvocabulary" showNodes="false"]
+
+
+Advanced Settings
+------------------------------
+Same setting syntax and options as in core croogo vocabularies,
+Extra attributes:
+"showNodes" (true) - disable showing nodes for term
+"nodeController" (node) - controller for term nodes
+"nodeAction" (view) - action for term nodes
+"nodePlugin" (false) - plugin for term nodes
+"nodeTagAttributes" (array) - attributes for <li> element
 
 This plugin is so fresh, so there can be some bugs. Report it to me
