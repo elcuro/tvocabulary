@@ -8,5 +8,5 @@
  * Component
  *
  */
-        Croogo::hookComponent('Nodes', 'Tvocabulary.Tvocabulary');
+        Croogo::hookComponent('*', 'Tvocabulary.Tvocabulary');
 ?>
