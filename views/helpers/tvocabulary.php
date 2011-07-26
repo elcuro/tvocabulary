@@ -62,6 +62,7 @@ class TvocabularyHelper extends AppHelper {
          *
          * @param array $terms
          * @param array $options
+         * @param integer $rew_term_id
          * @param integer $depth
          * @return string
          */
