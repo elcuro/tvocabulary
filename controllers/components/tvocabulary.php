@@ -18,37 +18,78 @@ class TvocabularyComponent extends Object {
 
                 $this->controller =& $controller;
                 if (!isset($this->controller->params['admin']) && !isset($this->controller->params['requested'])) {
+                        $this->taxonomyPath();
                         $this->termNodes();
                 }
 
         }
 
         /**
-         * Set term nodes for layout
+         * Set taxonomy path for layout
+         *
+         * @return void
+         */
+        public function taxonomyPath() {
+
+                $path = array(0 => array('Taxonomy' => array(
+                    'parent_id' => null,
+                    'term_id' => null,
+                    'id' => null
+                )));
+
+                // term view
+                if (isset($this->controller->viewVars['term']['Term']['id'])) {
+                        $term_id = $this->controller->viewVars['term']['Term']['id'];
+                        $this->controller->Node->Taxonomy->recursive = 0;
+                        $taxonomy = $this->controller->Node->Taxonomy->find('first', array(
+                            'conditions' => array('Taxonomy.term_id' => $term_id),
+                            'fields' => 'Taxonomy.id',
+                            'cache' => array(
+                                'name' => 'nodes_taxonomy_id_'.$term_id,
+                                'config' => 'nodes_term')
+                        ));
+                        $path = $this->controller->Node->Taxonomy->getpath($taxonomy['Taxonomy']['id']);
+
+                }
+
+                // node view
+                if (isset($this->controller->viewVars['node']['Taxonomy'])) {
+                        $path = $this->controller->Node->Taxonomy->getpath(
+                                $this->controller->viewVars['node']['Taxonomy']['id']);
+                }
+
+                $this->controller->set('taxonomy_path', $path);
+        }
+
+        /**
+         * Set children Nodes of for layout
          *
          * @return void
          */
         public function termNodes() {
            
                 $term_nodes = array();
+
                 // term view
                 if (isset($this->controller->viewVars['term']['Term']['id'])) {
                         $term_nodes[$this->controller->viewVars['term']['Term']['slug']] = $this->controller->viewVars['nodes'];
                 }
+
                 // node view
                 if (isset($this->controller->viewVars['node']['Taxonomy'])) {
                         $term_slugs = array();
                         $params = array();
                         $params['order'] = array('Node.created DESC');
                         $params['limit'] = 20;
-                        $params['cache'] = array(
-                            'prefix' => 'croogo_nodes_tvocabulary_plugin_',
-                            'config' => 'croogo_nodes',
-                        );
+
 
                         $term_slugs = Set::extract('/Term/slug', $this->controller->viewVars['node']['Taxonomy']);
                         if (count($term_slugs > 0)) {
                                 foreach ($term_slugs as $slug) {
+                                        $params['cache'] = array(
+                                            'prefix' => 'tvocabulary_plugin_child_nodes_'.$slug,
+                                            'config' => 'croogo_nodes',
+                                        );
                                         $params['conditions'] = array(
                                             'Node.status' => 1,
                                             'Node.terms LIKE' => '%"' . $slug . '"%',

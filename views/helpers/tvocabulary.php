@@ -21,19 +21,13 @@ class TvocabularyHelper extends AppHelper {
         );
 
         /**
-         * parent ids of term
-         *
-         * @var array
-         */
-        private $_thread_path = array();
-
-        /**
          * Get vocabulary terms
          *
          * @param string $vocabulary_alias
          * @return array
          */
         public function nestedTerms($vocabulary, $options = array()) {
+
                 $_options = array(
                     'linkSelected' => true,
                     'showNodes' => 'true',
@@ -49,10 +43,8 @@ class TvocabularyHelper extends AppHelper {
                 $term_id = false;
                 if (is_array($vocabulary)) {
                         $term_id = $this->__getTermId($vocabulary);
-                        $this->__getPath($term_id, $vocabulary);                        
                         $output .= $this->__nestedTerms($vocabulary, $options, $term_id);
                 }
-                unset($this->_term_path);
                 return $output;
 
         }
@@ -66,69 +58,77 @@ class TvocabularyHelper extends AppHelper {
          * @param integer $depth
          * @return string
          */
-        private function __nestedTerms($terms, $options, $req_term_id = false, $depth = 1) {
+        private function __nestedTerms($terms, $options, $req_term_id = false, $depth = 0) {
 
                 $output = '';
+                $taxonomy_path = $this->Layout->View->viewVars['taxonomy_path'];
+
                 foreach ($terms as $term) {
+                        
+                        // term link
                         if ($options['link']) {
-                                $term_attr = array(
-                                    'id' => 'term-' . $term['Term']['id'],
-                                );
-                                $term_output = $this->Html->link($term['Term']['title'], array(
+                                $term_list_item = $this->Html->link($term['Term']['title'], array(
                                     'plugin' => $options['plugin'],
                                     'controller' => $options['controller'],
                                     'action' => $options['action'],
                                     'type' => $options['type'],
-                                    'slug' => $term['Term']['slug']), $term_attr);
+                                    'slug' => $term['Term']['slug']),
+                                        array('id' => 'term-' . $term['Term']['id']));
                         } else {
-                                $term_output = $term['Term']['title'];
+                                $term_list_item = $term['Term']['title'];
                         }
-
-                        $term_parent = $term['Taxonomy']['parent_id'];
-                        $term_id = $term['Term']['id'];
-                        $term_title = $term['Term']['title'];
-                        $term_slug = $term['Term']['slug'];
-                        $term_has_children = false;
-
-                        // add current term_parent id to _thread_path
-                        $this->_thread_path[$depth] = $term_parent;
-                        
+      
                         // recursion
                         if (isset($term['children']) && count($term['children']) > 0) {
                                 $term_has_children = true;
-                                $term_output .= $this->__nestedTerms($term['children'], $options, $req_term_id, $depth + 1);
-                        }
-                                                
-                        // trim thread paths to current depth level
-                        $term_path = array();
-                        if (isset($this->_term_path) && is_array($this->_term_path)) {
-                                $this->_thread_path = array_slice($this->_thread_path, 0, $depth, true);
-                                $term_path = array_slice($this->_term_path, 0, $depth, true);
+                                $term_list_item .= $this->__nestedTerms($term['children'], $options, $req_term_id, $depth + 1);
                         }
 
-                        // if path is equal, or required term has child terms
-                        if (($this->_thread_path === $term_path) || ($term_parent == $req_term_id)) {
-                                // if is selected term
-                                if ($term_id == $req_term_id) {
-                                        // if is last in thread and if is enabled show nodes for this therm
-                                        if (!$term_has_children && ($options['showNodes'] == 'true')) {
-                                                $term_output .= $this->__nodesList($term_slug, $options);
-                                        } 
-                                        $term_output = $this->Html->tag('li', $term_output, array('class' => 'selected'));
+                        // is term in taxonomy path
+                        if ($this->__isTermInTaxonomyPath($term, $taxonomy_path, $depth)) {
+                                // is this term selected
+                                if ($term['Taxonomy']['term_id'] == $req_term_id) {
+                                        $term_list_item = $this->Html->tag('li', $term_list_item, array('class' => 'selected'));
+                                        // show child Nodes
+                                        if (isset($term_has_children) && ($options['showNodes'] == 'true')) {
+                                                $term_list_item .= $this->__nodesList($term_slug, $options);
+                                        }
                                 } else {
-                                        $term_output = $this->Html->tag('li', $term_output);
+                                        $term_list_item = $this->Html->tag('li', $term_list_item);
                                 }
                         } else {
-                                $term_output = '';
+                                $term_list_item = '';
                         }
                         
-                        $output .= $term_output;
+                        $output .= $term_list_item;
                 }
                 
-                if ($output != null) {
+                if ($output != '') {
                         $output = $this->Html->tag($options['tag'], $output, $options['tagAttributes']);
                 }
                 return $output;
+        }
+
+        /**
+         * Check if is term in taxonomy path
+         *
+         * @param array $term
+         * @param array $taxonomy_path
+         * @param int $depth
+         * @return boolean
+         */
+        private function __isTermInTaxonomyPath($term, $taxonomy_path, $depth) {
+                if (isset ($taxonomy_path[$depth-1])) {
+                       if ($term['Taxonomy']['parent_id'] == $taxonomy_path[$depth - 1]['Taxonomy']['id']) {
+                               return true;
+                       }
+                }
+                if (isset ($taxonomy_path[$depth])) {
+                       if ($term['Taxonomy']['parent_id'] == $taxonomy_path[$depth]['Taxonomy']['parent_id']) {
+                               return true;
+                       }
+                }
+                return false;
         }
 
         /**
@@ -169,37 +169,6 @@ class TvocabularyHelper extends AppHelper {
                                 $output = $this->Html->tag('ul', $output);
                         }
                 }
-                return $output;
-        }
-
-        /**
-         * Scan for path of current term
-         *
-         * @param integer $term_id
-         * @param array $terms Threaded terms
-         * @depth integer $depth
-         * @return array
-         */
-        private function __getPath($term_id, $terms, $depth = 1) {
-                $output = array();
-                foreach ($terms as $term) {
-                        $term_output = array();
-                        $term_output['parent_id'] = $term['Taxonomy']['parent_id'];
-                        $term_output['term_id'] = $term['Term']['id'];
-
-                        $this->_thread_path = array_slice($this->_thread_path, 0, $depth, true);
-                        $this->_thread_path[$depth] = $term_output['parent_id'];
-                        if ($term_output['term_id'] == $term_id) {
-                                // save current _thread_path to _term_path
-                                $this->_term_path = $this->_thread_path;
-                        }
-
-                        if (isset($term['children']) && count($term['children']) > 0) {
-                                $term_output['children'] = $this->__getPath($term_id, $term['children'], $depth + 1);
-                        }                                                                      
-
-                        $output[] = $term_output;
-                }                
                 return $output;
         }
 
