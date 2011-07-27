@@ -90,8 +90,8 @@ class TvocabularyHelper extends AppHelper {
                                 if ($term['Taxonomy']['term_id'] == $req_term_id) {
                                         $term_list_item = $this->Html->tag('li', $term_list_item, array('class' => 'selected'));
                                         // show child Nodes
-                                        if (isset($term_has_children) && ($options['showNodes'] == 'true')) {
-                                                $term_list_item .= $this->__nodesList($term_slug, $options);
+                                        if (!isset($term_has_children) && ($options['showNodes'] == 'true')) {
+                                                $term_list_item .= $this->__nodesList($term['Term']['slug'], $options);
                                         }
                                 } else {
                                         $term_list_item = $this->Html->tag('li', $term_list_item);
