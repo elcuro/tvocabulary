@@ -1,12 +1,5 @@
 <?php
-/**
- * Helper
- *
- */
         Croogo::hookHelper('*', 'Tvocabulary.Tvocabulary');
-/**
- * Component
- *
- */
         Croogo::hookComponent('*', 'Tvocabulary.Tvocabulary');
+        Croogo::hookBehavior('Term', 'Tvocabulary.Tvocabulary');
 ?>
