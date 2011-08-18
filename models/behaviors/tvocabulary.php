@@ -19,20 +19,6 @@ class TvocabularyBehavior extends ModelBehavior {
 
         }
 
-        /**
-         * After save call back
-         *
-         * @param object $mode;
-         * @param boolean $created
-         * @return array
-         */
-        public function afterSave(&$model, $created = false) {
-
-                $model->Taxonomy->recover();
-
-                return true;
-        }
-
 
 }
 ?>
