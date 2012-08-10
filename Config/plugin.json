@@ -1,0 +1,11 @@
+{
+	"name": "Tvocabulary",
+	"description": "Nested tree Term navigation",
+
+	"author": "Juraj Jancuska",
+	"authorEmail": "jjancuska@gmail.com",
+	"authorUrl": "",
+
+	"dependencies": {
+	}
+}
