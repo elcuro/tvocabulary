@@ -48,13 +48,13 @@ class TvocabularyComponent extends Object {
                                 'name' => 'nodes_taxonomy_id_'.$term_id,
                                 'config' => 'nodes_term')
                         ));
-                        $path = $this->controller->Node->Taxonomy->getpath($taxonomy['Taxonomy']['id']);
+                        $path = $this->controller->Node->Taxonomy->getPath($taxonomy['Taxonomy']['id']);
 
                 }
 
                 // node view
                 if (isset($this->controller->viewVars['node']['Taxonomy'][0])) {
-                        $path = $this->controller->Node->Taxonomy->getpath(
+                        $path = $this->controller->Node->Taxonomy->getPath(
                                 $this->controller->viewVars['node']['Taxonomy'][0]['id']);
                 }
 
