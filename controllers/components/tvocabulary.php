@@ -97,7 +97,9 @@ class TvocabularyComponent extends Object {
                                                 'Node.visibility_roles' => '',
                                                 'Node.visibility_roles LIKE' => '%"' . $this->controller->Croogo->roleId . '"%'
                                             ))
+                                            
                                         );
+                                        $params['order'] = array('Node.created DESC');
                                         $term_nodes[$slug] = $this->controller->Node->find('all', $params);
                                 }
 
