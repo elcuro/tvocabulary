@@ -87,12 +87,12 @@ class TvocabularyHelper extends AppHelper {
                         // is term in taxonomy path
                         if ($this->__isTermInTaxonomyPath($term, $taxonomy_path, $depth)) {
                                 // is this term selected
-                                if ($term['Taxonomy']['term_id'] == $req_term_id) {
-                                        $term_list_item = $this->Html->tag('li', $term_list_item, array('class' => 'selected'));
-                                        // show child Nodes
+                                if ($term['Taxonomy']['term_id'] == $req_term_id) {                                       
                                         if (!isset($term_has_children) && ($options['showNodes'] == 'true')) {
+                                               // add child Nodes
                                                 $term_list_item .= $this->__nodesList($term['Term']['slug'], $options);
-                                        }
+                                        }                                       
+                                        $term_list_item = $this->Html->tag('li', $term_list_item, array('class' => 'selected'));                                        
                                 } else {
                                         $term_list_item = $this->Html->tag('li', $term_list_item);
                                 }
