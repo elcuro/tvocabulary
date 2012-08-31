@@ -192,14 +192,11 @@ class TvocabularyHelper extends AppHelper {
                 }
 
                 // node view
-                if (isset($this->Layout->View->viewVars['node']['Taxonomy'])) {
-                        //check if is vocabulary for this node
-                        foreach($this->Layout->View->viewVars['node']['Taxonomy'] as $taxonomy) {
-                                if ($vocabulary_id == $taxonomy['vocabulary_id']) {
-                                        return $taxonomy['Term']['id'];
-                                }
-                        }
+                if (isset($this->Layout->View->viewVars['taxonomy_path'][0]['Taxonomy']['term_id'])) {
+                       $taxonomy = end($this->Layout->View->viewVars['taxonomy_path']);
+                       return $taxonomy['Taxonomy']['term_id'];
                 }
+              
                 return 0;
         }
 
