@@ -16,7 +16,10 @@ class TvocabularyComponent extends Object {
        }       
        
        public function shutdown(Controller $controller) {              
-       }              
+       }       
+       
+       public function beforeRedirect(Controller $controller) {              
+       } 
        
 
        /**
