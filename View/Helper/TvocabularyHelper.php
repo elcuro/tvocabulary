@@ -61,7 +61,7 @@ class TvocabularyHelper extends AppHelper {
         private function __nestedTerms($terms, $options, $req_term_id = false, $depth = 0) {
 
                 $output = '';
-                $taxonomy_path = $this->Layout->View->viewVars['taxonomy_path'];
+                $taxonomy_path = $this->_View->viewVars['taxonomy_path'];
 
                 foreach ($terms as $term) {
                         
@@ -139,7 +139,7 @@ class TvocabularyHelper extends AppHelper {
          */
         private function __nodesList($term_slug, $options) {
                 $output = '';
-                $term_nodes = $this->Layout->View->viewVars['term_nodes_for_layout'];
+                $term_nodes = $this->_View->viewVars['term_nodes_for_layout'];
                 if (isset($term_nodes[$term_slug])) {
                         foreach ($term_nodes[$term_slug] as $node) {
                                 if ($options['link']) {
@@ -148,8 +148,8 @@ class TvocabularyHelper extends AppHelper {
                                         );
                                         $li_attr = array();
                                         // check if is it selected node
-                                        if (isset($this->Layout->View->viewVars['node']) &&
-                                                ($this->Layout->View->viewVars['node']['Node']['id'] == $node['Node']['id'])) {
+                                        if (isset($this->_View->viewVars['node']) &&
+                                                ($this->_View->viewVars['node']['Node']['id'] == $node['Node']['id'])) {
                                                 $li_attr['class'] = 'selected-node';
                                         }
                                         $node_output = $this->Html->link($node['Node']['title'], array(
@@ -192,14 +192,12 @@ class TvocabularyHelper extends AppHelper {
                 }
 
                 // node view
-                if (isset($this->Layout->View->viewVars['node']['Taxonomy'])) {
-                        //check if is vocabulary for this node
-                        foreach($this->Layout->View->viewVars['node']['Taxonomy'] as $taxonomy) {
-                                if ($vocabulary_id == $taxonomy['vocabulary_id']) {
-                                        return $taxonomy['Term']['id'];
-                                }
-                        }
+                if (isset($this->_View->viewVars['taxonomy_path'][0]['Taxonomy']['term_id'])) {
+
+                        $taxonomy = end($this->_View->viewVars['taxonomy_path']);
+                        return $taxonomy['Taxonomy']['term_id'];
                 }
+
                 return 0;
         }
 

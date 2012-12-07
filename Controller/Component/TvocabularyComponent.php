@@ -30,7 +30,7 @@ class TvocabularyComponent extends Object {
         */
        public function beforeRender(Controller $controller) {
 
-              $this->controller = & $controller;
+              $this->controller = $controller;
               if (!isset($this->controller->params['admin']) && !isset($this->controller->params['requested'])) {
                      $this->taxonomyPath();
                      $this->termNodes();
@@ -66,10 +66,25 @@ class TvocabularyComponent extends Object {
 
               // node view
               if (isset($this->controller->viewVars['node']['Taxonomy'][0])) {
-                     $path = $this->controller->Node->Taxonomy->getPath(
-                             $this->controller->viewVars['node']['Taxonomy'][0]['id']);
-              }
+                     if (isset($this->controller->viewVars['type']['Params']['master_vocabulary_id'])) {
+                            // set path to longest from vocabulary in Type->Params->master_vocabulary_id
+                            $master_vocabulary_id = $this->controller->viewVars['type']['Params']['master_vocabulary_id'];
+                            $master_taxonomies = Set::extract('/Taxonomy[vocabulary_id=' . $master_vocabulary_id . ']', 
+                                    $this->controller->viewVars['node']);
 
+                            foreach ($master_taxonomies as $taxonomy) {
+                                   // get longest path
+                                   $tmp_path = $this->controller->Node->Taxonomy->getPath(
+                                           $taxonomy['Taxonomy']['id']);
+                                   if (count($tmp_path) > count($path))
+                                          $path = $tmp_path;
+                            }
+                     } else {
+                            // set path to first finded taxonomy
+                            $path = $this->controller->Node->Taxonomy->getPath(
+                                    $this->controller->viewVars['node']['Taxonomy'][0]['id']);
+                     }
+              }
               $this->controller->set('taxonomy_path', $path);
        }
 
@@ -110,6 +125,7 @@ class TvocabularyComponent extends Object {
                                                'Node.visibility_roles LIKE' => '%"' . $this->controller->Croogo->roleId . '"%'
                                        ))
                                    );
+                                   $params['order'] = array('Node.created DESC');
                                    $term_nodes[$slug] = $this->controller->Node->find('all', $params);
                             }
                      }
