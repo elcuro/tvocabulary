@@ -60,10 +60,11 @@ class TvocabularyHelper extends AppHelper {
          */
         private function __nestedTerms($terms, $options, $req_term_id = false, $depth = 0) {
 
-                $output = '';
+                $output = '';               
                 $taxonomy_path = $this->_View->viewVars['taxonomy_path'];
 
                 foreach ($terms as $term) {
+                        $term_has_children = false;
                         
                         // term link
                         if ($options['link']) {
@@ -88,7 +89,7 @@ class TvocabularyHelper extends AppHelper {
                         if ($this->__isTermInTaxonomyPath($term, $taxonomy_path, $depth)) {
                                 // is this term selected
                                 if ($term['Taxonomy']['term_id'] == $req_term_id) {
-                                        if (!isset($term_has_children) && ($options['showNodes'] == 'true')) {
+                                        if (($term_has_children == false) && ($options['showNodes'] == 'true')) {
                                                // show child Nodes
                                                $term_list_item .= $this->__nodesList($term['Term']['slug'], $options);
                                         }                                       
@@ -182,10 +183,10 @@ class TvocabularyHelper extends AppHelper {
                  $vocabulary_id = Set::classicExtract($vocabulary, '0.Taxonomy.vocabulary_id');
 
                 // term view
-                if (isset($this->Layout->View->viewVars['term']['Term']['id'])) {
-                        $term_id = $this->Layout->View->viewVars['term']['Term']['id'];
+                if (isset($this->_View->viewVars['term']['Term']['id'])) {
+                        $term_id = $this->_View->viewVars['term']['Term']['id'];
                         //check if is vocabulary for this term
-                        $term_vocabulary_id = Set::classicExtract($this->Layout->View->viewVars['term']['Vocabulary'], '0.id');                        
+                        $term_vocabulary_id = Set::classicExtract($this->_View->viewVars['term']['Vocabulary'], '0.id');                        
                         if ($vocabulary_id == $term_vocabulary_id) {
                                 return $term_id;
                         }

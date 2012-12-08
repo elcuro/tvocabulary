@@ -66,6 +66,7 @@ class TvocabularyComponent extends Object {
 
               // node view
               if (isset($this->controller->viewVars['node']['Taxonomy'][0])) {
+                     //$this->controller->Node->Taxonomy->recover();
                      if (isset($this->controller->viewVars['type']['Params']['master_vocabulary_id'])) {
                             // set path to longest from vocabulary in Type->Params->master_vocabulary_id
                             $master_vocabulary_id = $this->controller->viewVars['type']['Params']['master_vocabulary_id'];
@@ -76,7 +77,7 @@ class TvocabularyComponent extends Object {
                                    // get longest path
                                    $tmp_path = $this->controller->Node->Taxonomy->getPath(
                                            $taxonomy['Taxonomy']['id']);
-                                   if (count($tmp_path) > count($path))
+                                   if (count($tmp_path) >= count($path))
                                           $path = $tmp_path;
                             }
                      } else {
