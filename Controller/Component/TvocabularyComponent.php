@@ -54,13 +54,14 @@ class TvocabularyComponent extends Object {
               if (isset($this->controller->viewVars['term']['Term']['id'])) {
                      $term_id = $this->controller->viewVars['term']['Term']['id'];
                      $this->controller->Node->Taxonomy->recursive = 0;
-                     $taxonomy = $this->controller->Node->Taxonomy->find('first', array(
+                     $taxonomy = $this->controller->Node->Taxonomy->find('all', array(
                          'conditions' => array('Taxonomy.term_id' => $term_id),
                          'fields' => 'Taxonomy.id',
                          'cache' => array(
                              'name' => 'nodes_taxonomy_id_' . $term_id,
                              'config' => 'nodes_term')
                              ));
+                     $taxonomy = array_pop($taxonomy);
                      $path = $this->controller->Node->Taxonomy->getPath($taxonomy['Taxonomy']['id']);
               }
 
@@ -86,6 +87,7 @@ class TvocabularyComponent extends Object {
                                     $this->controller->viewVars['node']['Taxonomy'][0]['id']);
                      }
               }
+              debug($path); 
               $this->controller->set('taxonomy_path', $path);
        }
 
@@ -108,7 +110,7 @@ class TvocabularyComponent extends Object {
                      $term_slugs = array();
                      $params = array();
                      $params['order'] = array('Node.created DESC');
-                     $params['limit'] = 20;
+                     $params['limit'] = 30;
 
 
                      $term_slugs = Set::extract('/Term/slug', $this->controller->viewVars['node']['Taxonomy']);
